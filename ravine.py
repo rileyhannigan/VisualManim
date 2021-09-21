@@ -1,4 +1,23 @@
 from manim import *
+import numpy as np
+
+
+"""
+h/(1 + d*e^(-xy)) + |l*x*y|
+"""
+def ravine(x, y):
+	h = 5
+	d = 10
+	l = 0.1
+
+	z = np.abs(l*x*y)
+
+	if x*y <= 0:
+		z += h/(1 + d*np.exp(x*y))
+	else:
+		z += h/(1 + d*np.exp(-1*x*y))
+
+	return z
 
 
 class BraceAnnotation(Scene):
