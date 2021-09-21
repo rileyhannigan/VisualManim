@@ -5,7 +5,8 @@ import numpy as np
 """
 A 3D function to produce a ravine graph
 
-h/(1 + d*e^(-xy)) + |l*x*y|
+h/(1 + d*e^(xy)) + |l*x*y|, x*y <= 0
+h/(1 + d*e^(-xy)) + |l*x*y|, x*y > 0
 """
 def ravine(x, y):
 	h = 5    # The height of the ravine, the bigger the higher
@@ -18,6 +19,8 @@ def ravine(x, y):
 
 """
 A 3D function to produce a regular convex parabolic graph
+
+c*x^2 + c*y^2
 """
 def convex(x, y):
 	c = 0.1  # The width of the opening of the parabola, the smaller the wider
