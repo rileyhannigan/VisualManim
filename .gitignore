@@ -1,0 +1,5 @@
+# Python Cache Folder
+__pycache__/
+
+# Manim Media Folder
+media/
