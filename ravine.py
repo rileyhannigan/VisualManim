@@ -3,21 +3,25 @@ import numpy as np
 
 
 """
+A 3D function to produce a ravine graph
+
 h/(1 + d*e^(-xy)) + |l*x*y|
 """
 def ravine(x, y):
-	h = 5
-	d = 10
-	l = 0.1
+	h = 5    # The height of the ravine, the bigger the higher
+	d = 10   # The depth of the ravine, the bigger the deeper
+	l = 0.1  # The steepness of the ravine, the bigger the steeper
+	c = np.pow(-1, 1 - (x*y <= 0))
 
-	z = np.abs(l*x*y)
+	return h/(1 + d*np.exp(c*x*y)) + np.abs(l*x*y)
 
-	if x*y <= 0:
-		z += h/(1 + d*np.exp(x*y))
-	else:
-		z += h/(1 + d*np.exp(-1*x*y))
 
-	return z
+"""
+A 3D function to produce a regular convex parabolic graph
+"""
+def convex(x, y):
+	c = 0.1  # The width of the opening of the parabola, the smaller the wider
+	return c*(np.power(x, 2) + np.power(y, 2))
 
 
 class BraceAnnotation(Scene):
