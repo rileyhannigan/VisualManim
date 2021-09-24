@@ -2,38 +2,66 @@ from manim import *
 import numpy as np
 
 
-"""
-A 3D function to produce a ravine graph
 
-h/(1 + d*e^(xy)) + |l*x*y|, x*y <= 0
-h/(1 + d*e^(-xy)) + |l*x*y|, x*y > 0
-"""
-def ravine(x, y):
-	h = 5    # The height of the ravine, the bigger the higher
-	d = 10   # The depth of the ravine, the bigger the deeper
-	l = 0.1  # The steepness of the ravine, the bigger the steeper
-	c = np.pow(-1, 1 - (x*y <= 0))
+class Ravine(ThreeDScene):
+	"""
+	A 3D function to produce a ravine graph
 
-	return h/(1 + d*np.exp(c*x*y)) + np.abs(l*x*y)
+	h, d*x^2 + r*y^2 > w
+	d*(l/w)*x^2 + r*(l/w)*y^2, d*x^2 + r*y^2 <= w
+	"""
+	def func(self, x, y, x_co=1, y_co=1, height=2, radius=4):
+		if x_co*np.power(x, 2) + y_co*np.power(y, 2) > radius:
+			return np.array([x, y, height])
 
-
-"""
-A 3D function to produce a regular convex parabolic graph
-
-c*x^2 + c*y^2
-"""
-def convex(x, y):
-	c = 0.1  # The width of the opening of the parabola, the smaller the wider
-	return c*(np.power(x, 2) + np.power(y, 2))
+		return np.array([x, y, (height/radius)*(x_co*np.power(x, 2) + y_co*np.power(y, 2))])
 
 
-class BraceAnnotation(Scene):
-    def construct(self):
-        dot = Dot([-2, -1, 0])
-        dot2 = Dot([2, 1, 0])
-        line = Line(dot.get_center(), dot2.get_center()).set_color(ORANGE)
-        b1 = Brace(line)
-        b1text = b1.get_text("Horizontal distance")
-        b2 = Brace(line, direction=line.copy().rotate(PI / 2).get_unit_vector())
-        b2text = b2.get_tex("x-x_1")
-        self.add(line, dot, dot2, b1, b2, b1text, b2text)
+
+	def construct(self):
+		axes = ThreeDAxes()
+		convex_surface = ParametricSurface(
+			lambda x, y: self.func(x, y),
+			u_min=-3,
+			u_max=3,
+			v_min=-3,
+			v_max=3,
+			fill_opacity=0.5,
+			checkerboard_colors=[BLUE, BLUE]
+		)
+		ravine_surface = ParametricSurface(
+			lambda x, y: self.func(x, y, y_co=10, radius=10),
+			u_min=-3,
+			u_max=3,
+			v_min=-3,
+			v_max=3,
+			fill_opacity=0.5,
+			checkerboard_colors=[BLUE, BLUE]
+		)
+
+		x, y = 0.8, -0.8
+
+		self.set_camera_orientation(phi=np.pi/5, theta=np.pi/5, distance=5)
+
+		self.play(Create(axes))
+		self.play(Create(convex_surface))
+
+		d = Dot3D(radius=0.05, color=ORANGE).move_to(axes.coords_to_point(x, y, self.func(x, y)[-1] + 0.25))
+		self.play(Create(d))
+
+		self.begin_ambient_camera_rotation()
+		self.wait(4)
+
+		x, y = 2, -0.5
+		d2 = Dot3D(radius=0.05, color=ORANGE).move_to(axes.coords_to_point(x, y, self.func(x, y, y_co=10, radius=10)[-1] + 0.5))
+		self.play(Transform(convex_surface, ravine_surface))
+		self.play(Transform(d, d2))
+
+		self.wait()
+		#self.move_camera(phi=np.pi/5, theta=0.45*np.pi)
+		self.begin_ambient_camera_rotation()
+		self.wait(5)
+		#self.add(surface, axes, d)
+
+
+
