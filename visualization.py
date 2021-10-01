@@ -72,11 +72,6 @@ class Ravines(Scene):
 		ellipse_3a = Ellipse(width=1.0, height=6.0, color=BLUE_D)
 		ellipse_4a = Ellipse(width=0.5, height=5.0, color=BLUE_E)
 
-		ellipse_1b = Ellipse(width=1.5, height=8.0, color=BLUE_A).scale(0.6).to_edge(RIGHT, buff=4).to_edge(UP, buff=1)
-		ellipse_2b = Ellipse(width=1.0, height=7.0, color=BLUE_C).scale(0.6).to_edge(RIGHT, buff=4.166).to_edge(UP, buff=1.333)
-		ellipse_3b = Ellipse(width=0.5, height=6.0, color=BLUE_D).scale(0.6).to_edge(RIGHT, buff=4.333).to_edge(UP, buff=1.666)
-		ellipse_4b = Ellipse(width=0.25, height=5.0, color=BLUE_E).scale(0.6).to_edge(RIGHT, buff=4.4).to_edge(UP, buff=2)
-
 		graph_arrow = CurvedArrow(start_point=np.array([2, -3, 0]), end_point=np.array([5, 0, 0]))
 		dataset_arrow = CurvedArrow(start_point=np.array([0, -1.5, 0]), end_point=np.array([-1.5, 2.5, 0]))
 
@@ -102,10 +97,6 @@ class Ravines(Scene):
 		self.play(Transform(w1_label, w1_label4))
 		self.play(Transform(w2_label, w2_label4))
 		self.play(Create(graph_arrow))
-		self.play(Transform(ellipse_1a, ellipse_1b))
-		self.play(Transform(ellipse_2a, ellipse_2b))
-		self.play(Transform(ellipse_3a, ellipse_3b))
-		self.play(Transform(ellipse_4a, ellipse_4b))
 		self.play(Create(dataset_arrow))
 		self.play(Transform(misc_label, misc_label2))
 		
