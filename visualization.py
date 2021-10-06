@@ -1,6 +1,73 @@
 from manim import *
+import numpy as np
 
-class Ravines(Scene):	
+class Ravines(Scene):
+	"""
+	Calculates an Ellipse with the given properties:
+
+	x (float):	  the x coordinate
+
+	x_center (float): the center coordinates,x component
+	y_center (float): the center coordinates, y_component
+
+	x_coef (float):	  the coeffecient of x
+	y_coef (float):	  the coeffecient of y
+
+	radius (float):	  the radius of the ellipse (shortest radius)
+
+	You can elongate in the x or y direction by manipulating the coeffecients:
+		x_coef > y_coef => horizontal ellipse
+		x_coef < y_coef => vertical ellipse
+		x_coef = y_coef => round ellipse aka circle
+
+	The coeffecients can be used to represent a ratio between coordinates:
+		avg_x/avg_y = 4/1 => x_coef = 4, y_coef = 1
+	"""
+	def ellipse(self, x, x_center=1, y_center=1, x_coef=1, y_coef=1, radius=1):
+		x_component = (radius*x_coef - np.power(x - x_center, 2))*y_coef/x_coef
+		return np.sqrt(x_component) + y_center
+
+
+	"""
+	Calculates the optimal weights for the model given two data points:
+
+	x_ones: a tuple of two floats representing the x1 for the two datapoints
+	x_twos: a tuple of two floats representing the x2 for the two datapoints
+	ts:	a tuple of two floats representing the t for the two datapoints
+
+	The order of values must be identical across all parameters:
+		x_ones = (datapoint 1, datapoint 2)
+		x_twos = (datapoint 1, datapoint 2)
+		ts     = (datapoint 1, datapoint 2)
+
+				OR
+
+		x_ones = (datapoint 2, datapoint 1)
+                x_twos = (datapoint 2, datapoint 1)
+                ts     = (datapoint 2, datapoint 1)
+	"""
+	def optimal_weights(self, x_ones, x_twos, ts):
+		numerator = ts[1] + (x_ones[1]*ts[0])/x_ones[0]
+		denominator = (x_ones[1]*x_twos[0])/x_ones[0] + x_twos[1]
+		w2 = numerator/denominator
+		w1 = (x_twos[0]*w2 - ts[0])/x_ones[0]
+
+		return (w1, w2)
+
+
+	"""
+	Calculates the new weight value using gradient descent. Expects Mean Squared Loss to be used.
+
+	weight (float): the current value of the weight
+	x (float):	the current value of the corresponding x
+	y (float):	the current value of the corresponding y
+	t (float):	the current value of the corresponding t
+	l_rate (float):	the learning rate value
+	"""
+	def gradient_descent(self, weight, x, y, t, l_rate=0.1):
+		return weight - l_rate*2*(y - t)*x
+
+
 	def construct(self):
 
 		col1_vals = [114.8, 0.00323, 5.1]
