@@ -107,6 +107,8 @@ class Ravines(Scene):
 			h_buff = 1,
 			element_to_mobject_config={"num_decimal_places": 0})
 
+			
+
 		normal_dataset = DecimalTable(
 			[normal_data[0, :], normal_data[1, :], normal_data[2, :]],
 			col_labels = [MathTex("x_1"), MathTex("x_2"), MathTex("t")],
@@ -114,28 +116,30 @@ class Ravines(Scene):
 			element_to_mobject_config={"num_decimal_places": 0})
 
 
+		init_values=MathTex("w_1 = 0.1, w_2 = 0.2").next_to(dataset, DOWN, buff=1)
 
-		w1_label=MathTex("w_1 \\leftarrow", "w_1 - \\alpha \\frac{1}{2} (x_1(w_1 x_1 + w_2 x_2 - t)) ").next_to(dataset,DOWN, buff=-0.5)
-		w1_label1=MathTex("w_1 \\leftarrow", "w_1 - \\alpha \\frac{1}{2} (x_1(w_1 x_1 + w_2 x_2 - t)) ").next_to(dataset,DOWN, buff=-0.5)
-		w1_label2=MathTex("w_1 \\leftarrow", "0.02 - 0.0005 (x_1(0.02 x_1 + 0.1 x_2 - t)) ").next_to(dataset,DOWN, buff=-0.5)
-		w1_label3=MathTex("w_1 \\leftarrow", "0.02 - 0.0005 (114.8(0.02 * 114.8 + 0.1 * 0.00323 - 5.1)) ").next_to(dataset,DOWN, buff=-0.5)
-		w1_label4=MathTex("w_1 \\leftarrow", "0.18095").next_to(dataset,DOWN, buff=-0.5)
+		x_values=MathTex("x_1 = 1, x_2 = 50, t = 9").next_to(init_values, DOWN).set_color_by_tex("x_1", YELLOW)
 
-		w2_label=MathTex("w_2 \\leftarrow", "w_2 - \\alpha \\frac{1}{2} (x_2(w_1 x_1 + w_2 x_2 - t)) ").next_to(w1_label,DOWN)
+
+		y_label=MathTex("y =", "w_1 x_1 + w_2 x_2").to_edge(UP, buff=1)
+		y_label1=MathTex("y = 0.1 * 1 + 0.2 * 50")
+		y_label2=MathTex("y = 10.1")
+
+		w1_label=MathTex("w_1 \\leftarrow", "w_1 - \\alpha x_1(y - t) ").next_to(y_label,DOWN)
+		w1_label1=MathTex("w_1 \\leftarrow", "w_1 - \\alpha \\frac{1}{2} (x_1(w_1 x_1 + w_2 x_2 - t)) ").next_to(y_label,DOWN, buff=-0.5)
+		w1_label2=MathTex("w_1 \\leftarrow", "0.02 - 0.0005 (x_1(0.02 x_1 + 0.1 x_2 - t)) ").next_to(y_label,DOWN, buff=-0.5)
+		w1_label3=MathTex("w_1 \\leftarrow", "0.02 - 0.0005 (114.8(0.02 * 114.8 + 0.1 * 0.00323 - 5.1)) ").next_to(y_label,DOWN, buff=-0.5)
+		w1_label4=MathTex("w_1 \\leftarrow", "0.18095").next_to(y_label,DOWN, buff=-0.5)
+
+		w2_label=MathTex("w_2 \\leftarrow", "w_2 - \\alpha x_2(y - t) ").next_to(w1_label,DOWN)
 		w2_label1=MathTex("w_2 \\leftarrow", "w_2 - \\alpha \\frac{1}{2} (x_2(w_1 x_1 + w_2 x_2 - t)) ").next_to(w1_label,DOWN)
 		w2_label2=MathTex("w_2 \\leftarrow", "0.01 - 0.0005 (x_2(0.01 x_1 + 0.01 x_2 - t)) ").next_to(w1_label,DOWN)
 		w2_label3=MathTex("w_2 \\leftarrow", "0.01 - 0.0005 (0.00323(0.01 * 114.8 + 0.01 * 0.00323 - 5.1)) ").next_to(w1_label,DOWN)
 		w2_label4=MathTex("w_2 \\leftarrow", "0.010004 ").next_to(w1_label,DOWN)
 
-		init_values=MathTex("w_1 = 0.1, w_2 = 0.2").next_to(dataset, DOWN)
+		loss_label=MathTex("L =\\frac{1}{2} (y - t)^2").next_to(w2_label, DOWN)
 
-		y_label=MathTex("y =", "w_1 x_1 + w_2 x_2").next_to(init_values, DOWN)
-		y_label1=MathTex("y = 0.1 * 1 + 0.2 * 50").next_to(init_values, DOWN).to_edge(UP, buff=5.5).to_edge(LEFT, buff=2)
-		y_label2=MathTex("y = 10.1").next_to(init_values,DOWN).to_edge(UP, buff=5.5).to_edge(LEFT, buff=2)
-
-		loss_label=MathTex("L =\\frac{1}{2} (y - t)^2").next_to(y_label, DOWN)
-
-		cost_label=MathTex("J=\\frac{1}{2N}\\sum_{i=1}^{N}(y^{(i)} - t^{(i)})^2").next_to(y_label, DOWN)
+		cost_label=MathTex("J=\\frac{1}{2N}\\sum_{i=1}^{N}(y^{(i)} - t^{(i)})^2").next_to(w2_label, DOWN)
 
 		# Ellipse math
 		ws = self.optimal_weights(data[:2, :2], data[:2, 2])
@@ -206,22 +210,43 @@ class Ravines(Scene):
 		n2_graph = normal_graph.get_implicit_curve(n2,  color=GREEN)
 		n3_graph = normal_graph.get_implicit_curve(n3, color=BLUE)
 
-		graph_group = Group(graph, labels, e1_graph, e2_graph, e3_graph).scale(0.6)
+		graph_group = Group(graph, labels, e1_graph, e2_graph, e3_graph).scale(0.8).to_edge(RIGHT)
 		normal_graph_group = Group(normal_graph, labels, n1_graph, n2_graph, n3_graph).scale(0.6)
-		dataset_group = Group(dataset, init_values, cost_label, y_label)
-		group1 = Group(dataset_group, graph_group).arrange(buff=1)
+		dataset_group = Group(dataset, init_values).to_edge(UP, buff=1).to_edge(LEFT)
+		formula_group = Group(cost_label, y_label, w1_label, w2_label).to_edge(RIGHT)
+		#group1 = Group(dataset_group, graph_group).arrange(buff=1)
+		framebox = SurroundingRectangle(dataset[1], buff=0.3).to_edge(UP, buff=2.4)	
+		x_values.next_to(init_values, DOWN)
+		y_label1.move_to(y_label).to_edge(LEFT, buff=2)
+		y_label2.move_to(y_label).to_edge(LEFT, buff=2)
+
+
 
 		# Creating Scene
-		self.add(group1)
+		self.add(dataset_group)
+		self.add(formula_group)
 		#self.add(init_values)
 		#highlight around top row
 		# #self.add(cost_label)
 		self.wait()
-		self.play(FadeIn(y_label1),FadeOut(y_label))
+		self.play(Create(framebox))
 		self.wait()
-		self.play(FadeIn(y_label2),FadeOut(y_label1))
+		self.play(Create(x_values))
 		self.wait()
-		self.play(Transform(graph_group, normal_graph_group))
+		self.play(FadeOut(dataset), FadeOut(framebox))
+		self.wait()
+		self.play(formula_group.animate.shift(LEFT * 8.5))
+		self.wait()
+		self.play(FadeIn(graph_group))
+		self.wait(3)
+
+
+		# self.play(FadeIn(y_label1),FadeOut(y_label))
+		# self.wait()
+		# self.play(FadeIn(y_label2),FadeOut(y_label1))
+		# self.wait()
+		# self.wait()
+		# self.play(Transform(graph_group, normal_graph_group))
 
 		#self.play(Transform(y_label, y_label1))
 		# self.play(Transform(w2_label, w2_label1))
