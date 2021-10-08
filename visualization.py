@@ -96,11 +96,23 @@ class Ravines(Scene):
 		data = np.array([[1, 50, 9],
 				 [3, 70, 11],
 				 [5, 90, 13]])
+
+		normal_data = np.array([[1, 5, 9],
+				 [3, 7, 11],
+				 [5, 9, 13]])
+
 		dataset = DecimalTable(
 			[data[0, :], data[1, :], data[2, :]],
 			col_labels = [MathTex("x_1"), MathTex("x_2"), MathTex("t")],
 			h_buff = 1,
-			element_to_mobject_config={"num_decimal_places": 2})
+			element_to_mobject_config={"num_decimal_places": 0})
+
+		normal_dataset = DecimalTable(
+			[normal_data[0, :], normal_data[1, :], normal_data[2, :]],
+			col_labels = [MathTex("x_1"), MathTex("x_2"), MathTex("t")],
+			h_buff = 1,
+			element_to_mobject_config={"num_decimal_places": 0})
+
 
 
 		w1_label=MathTex("w_1 \\leftarrow", "w_1 - \\alpha \\frac{1}{2} (x_1(w_1 x_1 + w_2 x_2 - t)) ").next_to(dataset,DOWN, buff=-0.5)
@@ -115,7 +127,15 @@ class Ravines(Scene):
 		w2_label3=MathTex("w_2 \\leftarrow", "0.01 - 0.0005 (0.00323(0.01 * 114.8 + 0.01 * 0.00323 - 5.1)) ").next_to(w1_label,DOWN)
 		w2_label4=MathTex("w_2 \\leftarrow", "0.010004 ").next_to(w1_label,DOWN)
 
-		y_label=MathTex("y =", "w_1 x_1 + w_2 x_2").next_to(w2_label, DOWN)
+		init_values=MathTex("w_1 = 0.1, w_2 = 0.2").next_to(dataset, DOWN)
+
+		y_label=MathTex("y =", "w_1 x_1 + w_2 x_2").next_to(init_values, DOWN)
+		y_label1=MathTex("y = 0.1 * 1 + 0.2 * 50").next_to(init_values, DOWN).to_edge(UP, buff=5.5).to_edge(LEFT, buff=2)
+		y_label2=MathTex("y = 10.1").next_to(init_values,DOWN).to_edge(UP, buff=5.5).to_edge(LEFT, buff=2)
+
+		loss_label=MathTex("L =\\frac{1}{2} (y - t)^2").next_to(y_label, DOWN)
+
+		cost_label=MathTex("J=\\frac{1}{2N}\\sum_{i=1}^{N}(y^{(i)} - t^{(i)})^2").next_to(y_label, DOWN)
 
 		# Ellipse math
 		ws = self.optimal_weights(data[:2, :2], data[:2, 2])
@@ -138,6 +158,24 @@ class Ravines(Scene):
 		e2_range = self.ellipse_range(y_center=ws[1], y_coef=y_coef, radius=r2)
 		e3_range = self.ellipse_range(y_center=ws[1], y_coef=y_coef, radius=r3)
 
+
+		# Normalized math
+		nws = self.optimal_weights(normal_data[:2, :2], normal_data[:2, 2])
+		normal_x_coef = np.abs(nws[0]/nws[1])
+		normal_y_coef = 1
+
+		n1 = lambda x, y: self.ellipse(x, y, x_center=nws[0], y_center=nws[1], x_coef=normal_x_coef, y_coef=normal_y_coef, radius=r1)
+		n2 = lambda x, y: self.ellipse(x, y, x_center=nws[0], y_center=nws[1], x_coef=normal_x_coef, y_coef=normal_y_coef, radius=r2)
+		n3 = lambda x, y: self.ellipse(x, y, x_center=nws[0], y_center=nws[1], x_coef=normal_x_coef, y_coef=normal_y_coef, radius=r3)
+
+		n1_domain = self.ellipse_domain(x_center=nws[0], x_coef=normal_x_coef, radius=r1)
+		n2_domain = self.ellipse_domain(x_center=nws[0], x_coef=normal_x_coef, radius=r2)
+		n3_domain = self.ellipse_domain(x_center=nws[0], x_coef=normal_x_coef, radius=r3)
+
+		n1_range = self.ellipse_range(y_center=nws[1], y_coef=normal_y_coef, radius=r1)
+		n2_range = self.ellipse_range(y_center=nws[1], y_coef=normal_y_coef, radius=r2)
+		n3_range = self.ellipse_range(y_center=nws[1], y_coef=normal_y_coef, radius=r3)
+
 		# Implicit Graph
 
 		misc_label=MathTex("w_1 = 0.02, w_2 = 0.01, \\alpha = 0.001")
@@ -149,27 +187,50 @@ class Ravines(Scene):
 			y_length = 8,
 			axis_config={"include_numbers": False}
 		)
+
+		normal_graph = Axes(
+			x_range=[n1_domain[0] - 0.5, n1_domain[1] + 0.5, (n1_domain[1] - n1_domain[0])/4],
+			y_range=[n1_range[0] - 0.5, n1_range[1] + 0.5, (n1_range[1] - n1_range[0])/4],
+			x_length = 8,
+			y_length = 8,
+			axis_config={"include_numbers": False}
+		)
+
 		labels = graph.get_axis_labels(x_label='w_1', y_label='w_2')
 
 		e1_graph = graph.get_implicit_curve(e1, color=RED)
 		e2_graph = graph.get_implicit_curve(e2,  color=GREEN)
 		e3_graph = graph.get_implicit_curve(e3, color=BLUE)
 
-		graph_group = Group(graph, e1_graph, e2_graph, e3_graph)
-		dataset_group = Group(dataset, w1_label, w2_label)
-		group1 = Group(dataset_group, graph_group).scale(0.6).arrange(buff=1).to_edge(UP, buff=0.5)
+		n1_graph = normal_graph.get_implicit_curve(n1, color=RED)
+		n2_graph = normal_graph.get_implicit_curve(n2,  color=GREEN)
+		n3_graph = normal_graph.get_implicit_curve(n3, color=BLUE)
+
+		graph_group = Group(graph, labels, e1_graph, e2_graph, e3_graph).scale(0.6)
+		normal_graph_group = Group(normal_graph, labels, n1_graph, n2_graph, n3_graph).scale(0.6)
+		dataset_group = Group(dataset, init_values, cost_label, y_label)
+		group1 = Group(dataset_group, graph_group).arrange(buff=1)
 
 		# Creating Scene
 		self.add(group1)
+		#self.add(init_values)
+		#highlight around top row
+		# #self.add(cost_label)
 		self.wait()
-		self.play(Transform(w1_label, w1_label1))
-		self.play(Transform(w2_label, w2_label1))
+		self.play(FadeIn(y_label1),FadeOut(y_label))
 		self.wait()
-		self.play(Transform(w1_label, w1_label2))
-		self.play(Transform(w2_label, w2_label2))
+		self.play(FadeIn(y_label2),FadeOut(y_label1))
 		self.wait()
-		self.play(Transform(w1_label, w1_label3))
-		self.play(Transform(w2_label, w2_label3))
-		self.wait()
-		self.play(Transform(w1_label, w1_label4))
-		self.play(Transform(w2_label, w2_label4))
+		self.play(Transform(graph_group, normal_graph_group))
+
+		#self.play(Transform(y_label, y_label1))
+		# self.play(Transform(w2_label, w2_label1))
+		# self.wait()
+		# self.play(Transform(w1_label, w1_label2))
+		# self.play(Transform(w2_label, w2_label2))
+		# self.wait()
+		# self.play(Transform(w1_label, w1_label3))
+		# self.play(Transform(w2_label, w2_label3))
+		# self.wait()
+		# self.play(Transform(w1_label, w1_label4))
+		# self.play(Transform(w2_label, w2_label4))
