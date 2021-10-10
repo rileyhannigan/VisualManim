@@ -89,27 +89,15 @@ class Ravines(Scene):
 			x_range=[0.75, 1.25, 0.2],
 			y_range=[0.05, 0.15, 0.05],
 			axis_config={"include_numbers": False}
-		)
+		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
 		n_graph = Axes(
 			x_range=[0.75, 1.25, 0.125],
 			y_range=[0.75, 1.25, 0.125],
 			axis_config={"include_numbers": False}
-		)
+		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
 		labels = r_graph.get_axis_labels(x_label='w_1', y_label='w_2')
-
-		r_graphs = [
-			r_graph.get_implicit_curve(ravines[0], color=RED),
-			r_graph.get_implicit_curve(ravines[1], color=GREEN),
-			r_graph.get_implicit_curve(ravines[2], color=BLUE),
-		]
-
-		n_graphs = [
-			n_graph.get_implicit_curve(normals[0], color=RED),
-			n_graph.get_implicit_curve(normals[1], color=GREEN),
-			n_graph.get_implicit_curve(normals[2], color=BLUE),
-		]
 
 		# Math Text
 		weight_values = [
@@ -120,7 +108,6 @@ class Ravines(Scene):
 
 		# Formulas
 		y_label = MathTex("y = w_1 x_1 + w_2 x_2", color=YELLOW)
-		cost_label = MathTex("J = \\frac{1}{N}\\sum_{i=1}^{N}(y_i} - t_i)^2", color=RED)
 		w1_label = MathTex("w_1 \\leftarrow", "w_1 - \\alpha x_1(y - t) ")
 		w2_label = MathTex("w_2 \\leftarrow", "w_2 - \\alpha x_2(y - t) ")
 
@@ -142,25 +129,10 @@ class Ravines(Scene):
 
 		# Calculating Cost
 		cost_labels = [
-			MathTex("J = \\frac{1}{N}\\sum_{i=1}^{N}(y_i - t_i)^2", color=RED),
-			MathTex("J = \\frac{1}{3}\\sum_{i=1}^{3}(y_i - t_i)^2", color=RED),
-			MathTex("J = \\frac{1}{3} (y_1 - t_1)^2 + (y_2 - t_2)^2 + (y_3 - t_3)^2", color=RED),
+			MathTex("J = \\frac{1}{N}\\sum_{i=1}^{N}(y_i - t_i)^2", color=RED).scale(0.8),
+			MathTex("J = \\frac{1}{3}\\sum_{i=1}^{3}(y_i - t_i)^2", color=RED).scale(0.8),
+			MathTex("J = \\frac{1}{3} [(y_1 - t_1)^2 + (y_2 - t_2)^2 + (y_3 - t_3)^2]", color=RED).scale(0.8),
 			MathTex(f"J = {round(r_loss[0], 3)}", color=RED),
-		]
-
-		# Grouping
-		r_graph_groups = [
-			Group(r_graph, labels).scale(1).to_edge(RIGHT).to_edge(UP),
-			Group(r_graph, labels, r_graphs[0]).scale(7).to_edge(RIGHT).to_edge(UP),
-			Group(r_graph, labels, r_graphs[0], r_graphs[1]).scale(7).to_edge(RIGHT).to_edge(UP),
-			Group(r_graph, labels, r_graphs[0], r_graphs[1], r_graphs[2]).scale(7).to_edge(RIGHT).to_edge(UP),
-		]
-
-		n_graph_groups = [
-			Group(n_graph, labels).scale(7).to_edge(RIGHT).to_edge(UP),
-			Group(n_graph, labels, n_graphs[0]).scale(7).to_edge(RIGHT).to_edge(UP),
-			Group(n_graph, labels, n_graphs[0], n_graphs[1]).scale(7).to_edge(RIGHT).to_edge(UP),
-			Group(n_graph, labels, n_graphs[0], n_graphs[1], n_graphs[2]).scale(7).to_edge(RIGHT).to_edge(UP),
 		]
 
 		dataset_group = Group(r_dataset, weight_values[0]).to_edge(UP, buff=1).to_edge(LEFT)
@@ -171,9 +143,9 @@ class Ravines(Scene):
 		]
 
 		# Creating Scene
-		self.add(dataset_group, r_graph.scale(1.25))
+		self.add(dataset_group, r_graph)
 		self.wait()
-		self.play(Create(y_label.scale(1.25)))
+		self.play(Create(y_label.scale(1.15).next_to(r_graph, DOWN)))
 		self.wait()
 
 		# First Row Calc
@@ -206,21 +178,33 @@ class Ravines(Scene):
 		self.wait()
 
 		# Cost Calc 1
-		self.play(FadeIn(cost_label.next_to(y3_labels[1], DOWN)))
+		self.play(Create(cost_labels[0].next_to(y3_labels[1], DOWN)))
 		self.wait(2)
-		self.play(Transform(cost_label, cost_labels[0].next_to(y3_labels[1], DOWN)))
 
 		# Cost Calc 2
+		self.play(ReplacementTransform(cost_labels[0], cost_labels[1].next_to(y3_labels[1], DOWN)))
 		self.wait(2)
-		self.play(Transform(cost_labels[0], cost_labels[1].next_to(y3_labels[1], DOWN)))
 
 		# Cost Calc 3
-		self.wait(2)
-		self.play(Transform(cost_labels[1], cost_labels[1].next_to(y3_labels[2], DOWN)))
+		self.play(ReplacementTransform(cost_labels[1], cost_labels[2].next_to(y3_labels[1], DOWN)))
+		self.wait(4)
 
 		# Cost Calc 4
+		self.play(ReplacementTransform(cost_labels[2], cost_labels[3].next_to(y3_labels[1], DOWN)))
 		self.wait(2)
-		self.play(Transform(cost_labels[2], cost_labels[1].next_to(y3_labels[3], DOWN)))
 
 		# Show Graph
-#		self.play(Transform(r_graph_groups[0], r_graph_groups[1]))
+		r_graphs = [
+			r_graph.get_implicit_curve(ravines[0], color=RED),
+			r_graph.get_implicit_curve(ravines[1], color=GREEN),
+			r_graph.get_implicit_curve(ravines[2], color=BLUE),
+		]
+
+		n_graphs = [
+			n_graph.get_implicit_curve(normals[0], color=RED),
+			n_graph.get_implicit_curve(normals[1], color=GREEN),
+			n_graph.get_implicit_curve(normals[2], color=BLUE),
+		]
+
+		self.play(Create(r_graph + r_graphs[0]))
+		self.wait(2)
