@@ -62,9 +62,9 @@ class Ravines(Scene):
 		])
 
 		ravines = [
-				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=r_loss[0]),
-				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=r_loss[1]),
-				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=r_loss[2]),
+				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=1),
+				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=0.5),
+				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=0.1),
 		]
 
 		# Normalized math
@@ -79,22 +79,22 @@ class Ravines(Scene):
 		])
 
 		normals = [
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=n_loss[0]),
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=n_loss[1]),
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=n_loss[2]),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=1),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=0.5),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=0.1),
 		]
 
 		# Implicit Graphs
 		r_graph = Axes(
-			x_range=[0.75, 1.25, 0.2],
+			x_range=[0.75, 1.25, 0.05],
 			y_range=[0.05, 0.15, 0.05],
-			axis_config={"include_numbers": False}
+			axis_config={"include_numbers": True}
 		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
 		n_graph = Axes(
 			x_range=[0.75, 1.25, 0.125],
 			y_range=[0.75, 1.25, 0.125],
-			axis_config={"include_numbers": False}
+			axis_config={"include_numbers": True}
 		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
 		labels = r_graph.get_axis_labels(x_label='w_1', y_label='w_2')
@@ -111,31 +111,23 @@ class Ravines(Scene):
 		w1_label = MathTex("w_1 \\leftarrow", "w_1 - \\alpha x_1(y - t) ")
 		w2_label = MathTex("w_2 \\leftarrow", "w_2 - \\alpha x_2(y - t) ")
 
-		# Calculating Ys
-		y1_labels = [
-			MathTex(f"y_1 = {r_weights[0, 0]} * {r_data[0, 0]} + {r_weights[0, 1]} * {r_data[0, 1]}"),
-			MathTex(f"y_1 = {round(r_weights[0, 0] * r_data[0, 0] + r_weights[0, 1] * r_data[0, 1], 3)}"),
-		]
-
-		y2_labels = [
-			MathTex(f"y_2 = {r_weights[0, 0]} * {r_data[1, 0]} + {r_weights[0, 1]} * {r_data[1, 1]}"),
-			MathTex(f"y_2 = {round(r_weights[0, 0] * r_data[1, 0] + r_weights[0, 1] * r_data[1, 1], 3)}"),
-		]
-
-		y3_labels = [
-			MathTex(f"y_3 = {r_weights[0, 0]} * {r_data[2, 0]} + {r_weights[0, 1]} * {r_data[2, 1]}"),
-			MathTex(f"y_3 = {round(r_weights[0, 0] * r_data[2, 0] + r_weights[0, 1] * r_data[2, 1], 3)}"),
-		]
-
 		# Calculating Cost
-		cost_labels = [
-			MathTex("J = \\frac{1}{N}\\sum_{i=1}^{N}(y_i - t_i)^2", color=RED).scale(0.8),
-			MathTex("J = \\frac{1}{3}\\sum_{i=1}^{3}(y_i - t_i)^2", color=RED).scale(0.8),
-			MathTex("J = \\frac{1}{3} [(y_1 - t_1)^2 + (y_2 - t_2)^2 + (y_3 - t_3)^2]", color=RED).scale(0.8),
-			MathTex(f"J = {round(r_loss[0], 3)}", color=RED),
+		r_data = np.array([[2, 30, 5],
+				   [4, 30, 7],
+				   [8, -80, 0]])
+
+
+		cost_label = MathTex("J = \\frac{1}{N}\\sum_{i=1}^{N}(w_{1}^{(i)}x_{1}^{(i)} + w_{2}^{(i)}x_{2}^{(i)} - t^{(i)})^2", color=YELLOW).scale(0.75)
+
+		cost1_labels = [
+			MathTex("J =", color=RED),
+			MathTex("\\frac{1}{3}((2w_{1}^{(0)} + 30w_{2}^{(0)} - 5)^2", color=RED).scale(0.75),
+			MathTex("+ (4w_{1}^{(1)} + 30w_{2}^{(1)} - 7)^2", color=RED).scale(0.75),
+			MathTex("+ (8w_{1}^{(2)} - 80w_{2}^{(2)} - 0)^2)", color=RED).scale(0.75),
+			MathTex("= 1", color=RED),
 		]
 
-		dataset_group = Group(r_dataset, weight_values[0]).to_edge(UP, buff=1).to_edge(LEFT)
+		dataset_group = Group(r_dataset).to_edge(UP, buff=1).to_edge(LEFT)
 		frameboxes = [
 			SurroundingRectangle(r_dataset[1], buff=0.3).to_edge(UP, buff=2.4),
 			SurroundingRectangle(r_dataset[2], buff=0.3).to_edge(UP, buff=3.5),
@@ -145,53 +137,26 @@ class Ravines(Scene):
 		# Creating Scene
 		self.add(dataset_group, r_graph)
 		self.wait()
-		self.play(Create(y_label.scale(1.15).next_to(r_graph, DOWN)))
+		self.play(Create(cost_label.scale(1.15).next_to(r_graph, DOWN)))
 		self.wait()
 
 		# First Row Calc
-		self.play(Create(frameboxes[0]))
-		self.wait()
-
-		self.play(FadeIn(y1_labels[0].next_to(y_label, DOWN)))
-		self.wait(2)
-		self.play(Transform(y1_labels[0], y1_labels[1].next_to(y_label, DOWN)))
+		self.play(Create(cost1_labels[0].move_to(2.75*DOWN + RIGHT/10)))
+		self.play(FadeIn(cost1_labels[1].next_to(cost_label, DOWN)))
 		self.wait()
 
 		# Second Row Calc
-		self.play(FadeOut(frameboxes[0]))
-		self.play(Create(frameboxes[1]))
-		self.wait()
-
-		self.play(FadeIn(y2_labels[0].next_to(y1_labels[1], DOWN)))
+		self.play(FadeIn(cost1_labels[2].next_to(cost1_labels[1], DOWN)))
 		self.wait(2)
-		self.play(Transform(y2_labels[0], y2_labels[1].next_to(y1_labels[1], DOWN)))
-		self.wait()
 
 		# Third Row Calc
-		self.play(FadeOut(frameboxes[1]))
-		self.play(Create(frameboxes[2]))
-		self.wait()
-
-		self.play(FadeIn(y3_labels[0].next_to(y2_labels[1], DOWN)))
-		self.wait(2)
-		self.play(Transform(y3_labels[0], y3_labels[1].next_to(y2_labels[1], DOWN)))
-		self.wait()
-
-		# Cost Calc 1
-		self.play(Create(cost_labels[0].next_to(y3_labels[1], DOWN)))
+		self.play(FadeIn(cost1_labels[3].next_to(cost1_labels[2], DOWN)))
 		self.wait(2)
 
-		# Cost Calc 2
-		self.play(ReplacementTransform(cost_labels[0], cost_labels[1].next_to(y3_labels[1], DOWN)))
+		# Last Row Calc
+		self.play(FadeIn(cost1_labels[4].move_to(2.75*DOWN + 5.5*RIGHT)))
 		self.wait(2)
 
-		# Cost Calc 3
-		self.play(ReplacementTransform(cost_labels[1], cost_labels[2].next_to(y3_labels[1], DOWN)))
-		self.wait(4)
-
-		# Cost Calc 4
-		self.play(ReplacementTransform(cost_labels[2], cost_labels[3].next_to(y3_labels[1], DOWN)))
-		self.wait(2)
 
 		# Show Graph
 		r_graphs = [
