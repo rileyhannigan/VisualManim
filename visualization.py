@@ -10,6 +10,12 @@ class Ravines(Scene):
 		return np.mean(np.power(ts - ys, 2))
 
 
+	def normalize(self, xs):
+		mean = np.mean(xs, axis=0)
+		st_deviation = np.sqrt(np.var(xs, axis=0))
+		return (xs - mean)/st_deviation
+
+
 	"""
 	Calculates an Ellipse with the given properties:
 
