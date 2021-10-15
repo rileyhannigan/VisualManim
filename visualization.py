@@ -43,8 +43,6 @@ class Ravines(Scene):
 		n_data[:, :2] = np.round(self.normalize(r_data[:, :2]), 2)
 		n_data[:, 2] = r_data[:, 2]
 
-		print(n_data)
-
 		r_dataset = DecimalTable(
 			[r_data[0, :], r_data[1, :], r_data[2, :]],
 			col_labels = [MathTex("x_1"), MathTex("x_2"), MathTex("t")],
@@ -71,58 +69,59 @@ class Ravines(Scene):
 		]
 
 		# Normalized math
-		n_weights = np.array([[0.874, 0.770],
-				      [0.911, 0.838],
-				      [0.960, 0.927]])
+		n_weights = np.array([[0.874, 0.077],
+				      [0.911, 0.084],
+				      [0.960, 0.093]])
 
 		normals = [
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=1),
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=0.5),
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=0.1),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=19),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=18.9),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=18.8),
 		]
 
 		# Normalizing Formulas
-		mean_formula = MathTex(r"\mu_i = \frac{\sum_j^{m}x_{i,j}}{m}").shift(UP*3,RIGHT*2)
+		mean_formula = MathTex(r"\mu_i = \frac{\sum_j^{N}x_{i,j}}{N}").shift(UP*3,RIGHT*2)
 		variance_formula = MathTex(r"\sigma_i^2 = \frac{\sum_j{(x_{i,j}-\mu_i)^2}}{m}").shift(UP*1.5, RIGHT*2)
 
 		# mu labels
-		mu_1_formula = MathTex(r"\mu_1 = \frac{\sum_j^{m}x_{1,j}}{m}").shift(mean_formula.get_center())
-		mu_2_formula = MathTex(r"\mu_2 = \frac{\sum_j^{m}x_{2,j}}{m}").shift(mean_formula.get_center(), DOWN*1.5)
+		mu_1_formula = MathTex(r"\mu_1 = \frac{\sum_j^{N}x_{1,j}}{N}").shift(mean_formula.get_center())
+		mu_2_formula = MathTex(r"\mu_2 = \frac{\sum_j^{N}x_{2,j}}{N}").shift(mean_formula.get_center(), DOWN*1.5)
 		mu_1_expanded = MathTex(r"\mu_1 = \frac{2+4+8}{3}=4.67").shift(mu_1_formula.get_center())
-		mu_2_expanded = MathTex(r"\mu_2 = \frac{30+30-80}{3}=-6.67").shift(mu_2_formula.get_center())
+		mu_2_expanded = MathTex(r"\mu_2 = \frac{40+80-160}{3}=-13.33").shift(mu_2_formula.get_center())
 		mu_1 = MathTex(r'\mu_1 = 4.67').shift(mu_1_expanded.get_center(), LEFT*1.5)
-		mu_2 = MathTex(r'\mu_2 = -6.67').shift(mu_2_expanded.get_center(), LEFT*1.5 )
+		mu_2 = MathTex(r'\mu_2 = -13.33').shift(mu_2_expanded.get_center(), LEFT*1.5 )
 
-		# variance labels
-		var_1_formula = MathTex(r"\sigma_1 = \frac{\sum_j{(x_{1,j}-\mu_1)^2}}{m}").shift(variance_formula.get_center(), DOWN*2)
-		var_2_formula = MathTex(r"\sigma_2 = \frac{\sum_j{(x_{2,j}-\mu_2)^2}}{m}").shift(variance_formula.get_center(), DOWN*4)
-		var_1_expanded = MathTex(r"\sigma_1 = \frac{(2-4.67)^2 + (4-4.67)^2 + (8-4.67)^2}{3} = 6.22").scale(0.6).shift(var_1_formula.get_center(), RIGHT)
-		var_1 = MathTex(r"\sigma_1=6.22").shift(mu_2.get_center(), DOWN*1.5)
-		var_2_expanded = MathTex(r"\sigma_2 = \frac{(30+6.67)^2 + (30+6.67)^2 + (-80+6.67)^2}{3} = 2688.89").scale(0.6).shift(var_2_formula.get_center(), RIGHT)
-		var_2 = MathTex(r"\sigma_2=2688.89").shift(var_1.get_center(), DOWN*1.5)
+		# variance labels 
+		## ADD SQUARE ROOT 
+		var_1_formula = MathTex(r"\sigma_1 = \sqrt{\frac{\sum_j{(x_{1,j}-\mu_1)^2}}{N}}").shift(variance_formula.get_center(), DOWN*2)
+		var_2_formula = MathTex(r"\sigma_2 = \sqrt{\frac{\sum_j{(x_{2,j}-\mu_2)^2}}{N}}").shift(variance_formula.get_center(), DOWN*4)
+		var_1_expanded = MathTex(r"\sigma_1 = \sqrt{\frac{(2-4.67)^2 + (4-4.67)^2 + (8-4.67)^2}{3}} = \sqrt{6.22}").scale(0.6).shift(var_1_formula.get_center(), RIGHT)
+		var_1 = MathTex(r"\sigma_1=2.49").shift(mu_2.get_center(), DOWN*1.5)
+		var_2_expanded = MathTex(r"\sigma_2 = \frac{(40+6.67)^2 + (80+6.67)^2 + (-160+6.67)^2}{3} = \sqrt{11022.22}").scale(0.6).shift(var_2_formula.get_center(), RIGHT)
+		var_2 = MathTex(r"\sigma_2=104.99").shift(var_1.get_center(), DOWN*1.5)
 
 		# norm labels
 		x_1_norm = MathTex(r"\hat{x_1} = \frac{x_1 - \mu_1}{\sqrt{\sigma_1}}").shift(mu_1.get_center(), RIGHT*3)
 		x_2_norm = MathTex(r"\hat{x_2} = \frac{x_2 - \mu_2}{\sqrt{\sigma_2}}").shift(mu_2.get_center(), RIGHT*3)
 		x_1_norm_sub = MathTex(r"\hat{x_1} = \frac{x_1 - 4.67}{\sqrt{6.22}}=").shift(mu_1.get_center(), RIGHT*3.5)
-		x_2_norm_sub = MathTex(r"\hat{x_2} = \frac{x_2 + 6.67}{\sqrt{2688.89}}=").shift(mu_2.get_center(), RIGHT*3.5)
+		x_2_norm_sub = MathTex(r"\hat{x_2} = \frac{x_2 + -13.33}{\sqrt{11022.22}}=").shift(mu_2.get_center(), RIGHT*3.5)
 		x_1_1 = MathTex('-1.07').shift(x_1_norm.get_right(), LEFT*0.3)
-		x_1_2 = MathTex('0.71').shift(x_2_norm.get_right(), LEFT*0.3)
+		x_1_2 = MathTex('-0.51').shift(x_2_norm.get_right(), LEFT*0.3)
 		x_2_1 = MathTex('-0.27').shift(x_1_norm.get_right(), LEFT*0.3)
-		x_2_2 = MathTex('0.71').shift(x_2_norm.get_right(), LEFT*0.3)
+		x_2_2 = MathTex('0.89').shift(x_2_norm.get_right(), LEFT*0.3)
 		x_3_1 = MathTex('1.34').shift(x_1_norm.get_right(), LEFT*0.3)
-		x_3_2 = MathTex('-1.41').shift(x_2_norm.get_right(), LEFT*0.3)
+		x_3_2 = MathTex('-1.40').shift(x_2_norm.get_right(), LEFT*0.3)
 
 		# Implicit Graphs
 		r_graph = Axes(
-			x_range=[0.75, 1.25, 0.05],
-			y_range=[0.05, 0.15, 0.05],
+			x_range=[0.8, 1.1, 0.075],
+			y_range=[0, 0.1, 0.0375],
 			axis_config={"include_numbers": True}
 		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
 		n_graph = Axes(
-			x_range=[0.0, 1.25, 0.125],
-			y_range=[0.0, 1.25, 0.125],
+			x_range=[-3.0, 3.0, 1.5],
+			y_range=[-0.2, 3.2, 1.5],
 			axis_config={"include_numbers": True}
 		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
@@ -140,9 +139,9 @@ class Ravines(Scene):
 
 		costr_labels = [
 			MathTex("J = \\frac{1}{3}"),
-			MathTex("(2w_{1}^{(0)} + 30w_{2}^{(0)} - 5)^2 +").scale(0.75),
-			MathTex("(4w_{1}^{(1)} + 30w_{2}^{(1)} - 7)^2 +").scale(0.75),
-			MathTex("(8w_{1}^{(2)} - 80w_{2}^{(2)} - 0)^2  ").scale(0.75),
+			MathTex("(2w_{1}^{(0)} + 40w_{2}^{(0)} - 5)^2 +").scale(0.75),
+			MathTex("(4w_{1}^{(1)} + 80w_{2}^{(1)} - 7)^2 +").scale(0.75),
+			MathTex("(8w_{1}^{(2)} - 1600w_{2}^{(2)} - 0)^2  ").scale(0.75),
 		]
 
 		costr_radius = [
@@ -153,9 +152,9 @@ class Ravines(Scene):
 
 		costn_labels = [
 			MathTex("J = \\frac{1}{3}"),
-			MathTex("(-1.07w_{1}^{(0)} + 0.7w_{2}^{(0)} - 5)^2 +").scale(0.75),
-			MathTex("(-0.27w_{1}^{(1)} + 0.7w_{2}^{(1)} - 7)^2 +").scale(0.75),
-			MathTex("(1.34w_{1}^{(2)} - 1.41w_{2}^{(2)} - 0)^2  ").scale(0.75),
+			MathTex("(-1.07w_{1}^{(0)} - 0.51w_{2}^{(0)} - 5)^2 +").scale(0.75),
+			MathTex("(-0.27w_{1}^{(1)} + 0.89w_{2}^{(1)} - 7)^2 +").scale(0.75),
+			MathTex("(1.34w_{1}^{(2)} - 1.40w_{2}^{(2)} - 0)^2  ").scale(0.75),
 		]
 
 		costn_radius = [
