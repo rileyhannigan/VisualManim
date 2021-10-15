@@ -91,12 +91,12 @@ class Ravines(Scene):
 		]
 
 		# Normalizing Formulas
-		mean_formula = MathTex(r"\mu_i = \frac{\sum_j^{m}h_{i,j}}{m}").shift(UP*3,RIGHT*2)
-		variance_formula = MathTex(r"\sigma_i^2 = \frac{\sum_j{(h_{i,j}-\mu_i)^2}}{m}").shift(UP*1.5, RIGHT*2)
+		mean_formula = MathTex(r"\mu_i = \frac{\sum_j^{m}x_{i,j}}{m}").shift(UP*3,RIGHT*2)
+		variance_formula = MathTex(r"\sigma_i^2 = \frac{\sum_j{(x_{i,j}-\mu_i)^2}}{m}").shift(UP*1.5, RIGHT*2)
 		
 		# mu labels
-		mu_1_formula = MathTex(r"\mu_1 = \frac{\sum_j^{m}h_{1,j}}{m}").shift(mean_formula.get_center())
-		mu_2_formula = MathTex(r"\mu_2 = \frac{\sum_j^{m}h_{2,j}}{m}").shift(mean_formula.get_center(), DOWN*1.5)
+		mu_1_formula = MathTex(r"\mu_1 = \frac{\sum_j^{m}x_{1,j}}{m}").shift(mean_formula.get_center())
+		mu_2_formula = MathTex(r"\mu_2 = \frac{\sum_j^{m}x_{2,j}}{m}").shift(mean_formula.get_center(), DOWN*1.5)
 		mu_1_expanded = MathTex(r"\mu_1 = \frac{2+4+8}{3}=4.67").shift(mu_1_formula.get_center())
 		mu_2_expanded = MathTex(r"\mu_2 = \frac{30+30-80}{3}=-6.67").shift(mu_2_formula.get_center())
 		mu_1 = MathTex(r'\mu_1 = 4.67').shift(mu_1_expanded.get_center(), LEFT*1.5)
@@ -211,20 +211,20 @@ class Ravines(Scene):
 		self.play(Circumscribe(SurroundingRectangle(r_dataset.get_rows()[1])))
 		self.play(Write(x_1_1), Write(x_1_2))
 		self.wait()
-		self.play(Transform(r_dataset.get_rows()[1][0], n_dataset.get_rows()[1][0]))
-		self.play(Transform(r_dataset.get_rows()[1][1], n_dataset.get_rows()[1][1]))
+		self.play(Transform(r_dataset.get_rows()[1][0], n_dataset.get_rows()[1][0]),
+			Transform(r_dataset.get_rows()[1][1], n_dataset.get_rows()[1][1]))
 		self.wait()
 		self.play(Circumscribe(SurroundingRectangle(r_dataset.get_rows()[2])))
 		self.play(Transform(x_1_1, x_2_1), Transform(x_1_2, x_2_2))
 		self.wait()
-		self.play(Transform(r_dataset.get_rows()[2][0], n_dataset.get_rows()[2][0]))
-		self.play(Transform(r_dataset.get_rows()[2][1], n_dataset.get_rows()[2][1]))
+		self.play(Transform(r_dataset.get_rows()[2][0], n_dataset.get_rows()[2][0]),
+			Transform(r_dataset.get_rows()[2][1], n_dataset.get_rows()[2][1]))
 		self.wait()
 		self.play(Circumscribe(SurroundingRectangle(r_dataset.get_rows()[3])))
 		self.play(Transform(x_1_1, x_3_1), Transform(x_1_2, x_3_2))
 		self.wait()
-		self.play(Transform(r_dataset.get_rows()[3][0], n_dataset.get_rows()[3][0]))
-		self.play(Transform(r_dataset.get_rows()[3][1], n_dataset.get_rows()[3][1]))
+		self.play(Transform(r_dataset.get_rows()[3][0], n_dataset.get_rows()[3][0]),
+			Transform(r_dataset.get_rows()[3][1], n_dataset.get_rows()[3][1]))
 		self.wait()
 		self.play(FadeOut(x_1_norm), FadeOut(x_2_norm), FadeOut(x_1_1), FadeOut(x_1_2))
 
@@ -264,7 +264,7 @@ class Ravines(Scene):
 			n_graph.get_implicit_curve(normals[2], color=BLUE),
 		]
 
-		self.play(Create(n_graphs[0]))
-		self.play(Create(n_graphs[1]))
-		self.play(Create(n_graphs[2]))
+		self.play(Create(r_graphs[0]))
+		self.play(Transform(r_graphs[0], n_graphs[0]))
+	# self.play(Create(n_graphs[2]))
 		self.wait(2)
