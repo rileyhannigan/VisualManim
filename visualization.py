@@ -188,12 +188,14 @@ class Ravines(Scene):
 		self.wait()
 
 		# Getting Variances
+		self.play(Indicate(var_1_formula))
 		self.play(Circumscribe(SurroundingRectangle(r_dataset.get_columns()[0])))
 		self.play(Circumscribe(SurroundingRectangle(mu_1)))
 		self.play(Transform(var_1_formula, var_1_expanded))
 		self.wait()
 		self.play(Transform(var_1_formula, var_1))
 		self.wait()
+		self.play(Indicate(var_2_formula))
 		self.play(Circumscribe(SurroundingRectangle(r_dataset.get_columns()[1])))
 		self.play(Circumscribe(SurroundingRectangle(mu_2)))
 		self.play(Transform(var_2_formula, var_2_expanded))
