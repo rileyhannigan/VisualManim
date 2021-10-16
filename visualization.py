@@ -43,6 +43,7 @@ class Ravines(Scene):
 		n_data[:, :2] = np.round(self.normalize(r_data[:, :2]), 2)
 		n_data[:, 2] = r_data[:, 2]
 
+
 		r_dataset = DecimalTable(
 			[r_data[0, :], r_data[1, :], r_data[2, :]],
 			col_labels = [MathTex("x_1"), MathTex("x_2"), MathTex("t")],
@@ -64,8 +65,8 @@ class Ravines(Scene):
 
 		ravines = [
 				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=1),
-				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=0.5),
-				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=0.1),
+				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=0.8),
+				lambda x, y: self.ellipse(x, y, r_data[:, :2], r_data[:, 2], radius=0.65),
 		]
 
 		# Normalized math
@@ -75,8 +76,8 @@ class Ravines(Scene):
 
 		normals = [
 				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=19),
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=18.9),
-				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=18.8),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=18),
+				lambda x, y: self.ellipse(x, y, n_data[:, :2], n_data[:, 2], radius=17),
 		]
 
 		# Normalizing Formulas
@@ -101,27 +102,27 @@ class Ravines(Scene):
 		var_2 = MathTex(r"\sigma_2=104.99").shift(var_1.get_center(), DOWN*1.5)
 
 		# norm labels
-		x_1_norm = MathTex(r"\hat{x_1} = \frac{x_1 - \mu_1}{\sqrt{\sigma_1}}").shift(mu_1.get_center(), RIGHT*3)
-		x_2_norm = MathTex(r"\hat{x_2} = \frac{x_2 - \mu_2}{\sqrt{\sigma_2}}").shift(mu_2.get_center(), RIGHT*3)
-		x_1_norm_sub = MathTex(r"\hat{x_1} = \frac{x_1 - 4.67}{\sqrt{6.22}}=").shift(mu_1.get_center(), RIGHT*3.5)
-		x_2_norm_sub = MathTex(r"\hat{x_2} = \frac{x_2 + -13.33}{\sqrt{11022.22}}=").shift(mu_2.get_center(), RIGHT*3.5)
-		x_1_1 = MathTex('-1.07').shift(x_1_norm.get_right(), LEFT*0.3)
-		x_1_2 = MathTex('-0.51').shift(x_2_norm.get_right(), LEFT*0.3)
-		x_2_1 = MathTex('-0.27').shift(x_1_norm.get_right(), LEFT*0.3)
-		x_2_2 = MathTex('0.89').shift(x_2_norm.get_right(), LEFT*0.3)
-		x_3_1 = MathTex('1.34').shift(x_1_norm.get_right(), LEFT*0.3)
-		x_3_2 = MathTex('-1.40').shift(x_2_norm.get_right(), LEFT*0.3)
+		x_1_norm = MathTex(r"\hat{x_1} = \frac{x_1 - \mu_1}{\sigma_1}").shift(mu_1.get_center(), RIGHT*3)
+		x_2_norm = MathTex(r"\hat{x_2} = \frac{x_2 - \mu_2}{\sigma_2}").shift(mu_2.get_center(), RIGHT*3)
+		x_1_norm_sub = MathTex(r"\hat{x_1} = \frac{x_1 - 4.67}{2.48}=").shift(mu_1.get_center(), RIGHT*3.5)
+		x_2_norm_sub = MathTex(r"\hat{x_2} = \frac{x_2 + 13.33}{104.99}=").shift(mu_2.get_center(), RIGHT*3.5)
+		x_1_1 = MathTex('-1.07').shift(x_1_norm.get_right(), LEFT*0.1)
+		x_1_2 = MathTex('0.51').shift(x_2_norm.get_right(), LEFT*0.1)
+		x_2_1 = MathTex('-0.27').shift(x_1_norm.get_right(), LEFT*0.1)
+		x_2_2 = MathTex('0.89').shift(x_2_norm.get_right(), LEFT*0.1)
+		x_3_1 = MathTex('1.34').shift(x_1_norm.get_right(), LEFT*0.1)
+		x_3_2 = MathTex('-1.40').shift(x_2_norm.get_right(), LEFT*0.1)
 
 		# Implicit Graphs
 		r_graph = Axes(
 			x_range=[0.8, 1.1, 0.075],
-			y_range=[0, 0.1, 0.0375],
+			y_range=[0, 0.16, 0.075],
 			axis_config={"include_numbers": True}
 		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
 		n_graph = Axes(
-			x_range=[-3.0, 3.0, 1.5],
-			y_range=[-0.2, 3.2, 1.5],
+			x_range=[-5.25, 6.75, 1.875],
+			y_range=[-0.2, 7.4, 1.875],
 			axis_config={"include_numbers": True}
 		).scale(0.5).to_edge(RIGHT, buff=1).to_edge(UP)
 
@@ -146,8 +147,8 @@ class Ravines(Scene):
 
 		costr_radius = [
 			MathTex("= 1",  color=RED).scale(1.15),
-			MathTex("= 0.5", color=GREEN).scale(1.15),
-			MathTex("= 0.1", color=BLUE).scale(1.15),
+			MathTex("= 0.8", color=GREEN).scale(1.15),
+			MathTex("= 0.65", color=BLUE).scale(1.15),
 		]
 
 		costn_labels = [
@@ -158,9 +159,9 @@ class Ravines(Scene):
 		]
 
 		costn_radius = [
-			MathTex("= 1", color=RED).scale(1.15),
-			MathTex("= 1", color=GREEN).scale(1.15),
-			MathTex("= 1", color=BLUE).scale(1.15),
+			MathTex("= 19", color=RED).scale(1.15),
+			MathTex("= 18", color=GREEN).scale(1.15),
+			MathTex("= 17", color=BLUE).scale(1.15),
 		]
 
 		dataset_group = Group(r_dataset).to_edge(UP, buff=1).to_edge(LEFT)
@@ -216,18 +217,19 @@ class Ravines(Scene):
 		self.play(Create(r_graphs[2]))
 		self.wait(2)
 
-		##################### Transition ################
-		self.play(FadeOut(r_graphs[2]))
-		self.play(FadeOut(r_graphs[1]))
-		self.play(FadeOut(r_graphs[0]))
-		self.play(FadeOut(r_graph))
+		# ##################### Transition ################
+		self.play(FadeOut(r_graphs[2]), 
+			FadeOut(r_graphs[1]),
+			FadeOut(r_graphs[0]),
+			FadeOut(r_graph))
 
 		self.play(FadeOut(cost_label))
-		self.play(FadeOut(costr_radius[2]))
-		self.play(FadeOut(costr_labels[3]))
-		self.play(FadeOut(costr_labels[2]))
-		self.play(FadeOut(costr_labels[1]))
-		self.play(FadeOut(costr_labels[0]))
+
+		self.play(FadeOut(costr_radius[2]),
+			FadeOut(costr_labels[3]),
+			FadeOut(costr_labels[2]),
+			FadeOut(costr_labels[1]),
+			FadeOut(costr_labels[0]))
 
 
 		# Creating Normalized Scene
@@ -321,9 +323,7 @@ class Ravines(Scene):
 			n_graph.get_implicit_curve(normals[1], color=GREEN),
 			n_graph.get_implicit_curve(normals[2], color=BLUE),
 		]
-
-		self.play(Create(n_graph))
-		self.wait()
+	
 		self.play(Create(n_graphs[0]))
 		self.wait(2)
 
