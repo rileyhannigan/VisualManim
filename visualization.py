@@ -34,16 +34,14 @@ class Ravines(Scene):
 
 
 	def construct(self):
-		r_data = np.array([[2, 40, 5],
-				   [4, 80, 7],
-				   [8, -160, 0]])
+		r_data = np.array([[2, 30, 5],
+				   [4, 30, 7],
+				   [8, -80, 0]])
 
 
 		n_data = np.ones((3, 3))
 		n_data[:, :2] = np.round(self.normalize(r_data[:, :2]), 2)
 		n_data[:, 2] = r_data[:, 2]
-
-		print(n_data)
 
 		r_dataset = DecimalTable(
 			[r_data[0, :], r_data[1, :], r_data[2, :]],
